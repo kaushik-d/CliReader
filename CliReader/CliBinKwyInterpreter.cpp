@@ -1,6 +1,44 @@
 #include <iostream>
 #include <algorithm>
 #include "CliBinKwyInterpreter.h"
+#include "CliKwyLib.h"
+
+void CliBinKwyInterpreter::InterpretHeader()
+{
+	CliASCIIKywInterpreter::InterpretHeader();
+}
+
+void CliBinKwyInterpreter::InterpretGeometry()
+{
+	uint16_t CommandIndex;
+	while (m_infile.read((char*)&CommandIndex, sizeof(CommandIndex))) {
+
+		BinKeyword kwy(static_cast<BinKeyword>(CommandIndex));
+
+		switch (kwy) {
+		case BinKeyword::StartLayerLong:
+			ParseStartLayerLong();
+			break;
+		case BinKeyword::StartLayerShort:
+			ParseStartLayerShort();
+			break;
+		case BinKeyword::StartPolyLineShort:
+			ParseStartPolyLineShort();
+			break;
+		case BinKeyword::StartPolyLineLong:
+			ParseStartPolyLineLong();
+			break;
+		case BinKeyword::StartHatchesShort:
+			ParseStartHatchesShort();
+			break;
+		case BinKeyword::StartHatchesLong:
+			ParseStartHatchesLong();
+			break;
+		default:
+			throw std::runtime_error("Unknown command in binary : " + CommandIndex);
+		}
+	}
+}
 
 void CliBinKwyInterpreter::ParseStartLayerLong() {
 	//
@@ -47,7 +85,7 @@ void CliBinKwyInterpreter::ParseStartPolyLineShort() {
 	size_t dataSize(2 * polyLine.m_nPoints);
 	std::vector<uint16_t> points(dataSize);
 
-	if (m_infile.read((char*)points.data(), dataSize * sizeof(uint16_t))) {
+	if (m_infile.read((char*)points.data(), (std::streamsize) dataSize * sizeof(uint16_t))) {
 		polyLine.m_points.insert(polyLine.m_points.begin(), points.begin(), points.end());
 	}
 	else {
@@ -76,7 +114,7 @@ void CliBinKwyInterpreter::ParseStartPolyLineLong()
 	size_t dataSize(2 * polyLine.m_nPoints);
 	std::vector<float> points(dataSize);
 
-	if (m_infile.read((char*)points.data(), dataSize * sizeof(uint32_t))) {
+	if (m_infile.read((char*)points.data(), (std::streamsize) dataSize * sizeof(uint32_t))) {
 		polyLine.m_points.insert(polyLine.m_points.begin(), points.begin(), points.end());
 	}
 	else {

@@ -142,7 +142,9 @@
   <ItemGroup>
     <ClCompile Include="CliASCIIKywInterpreter.cpp" />
     <ClCompile Include="CliBinKwyInterpreter.cpp" />
+    <ClCompile Include="CliData.cpp" />
     <ClCompile Include="CliKwyInterpreter.cpp" />
+    <ClCompile Include="CliKwyLib.cpp" />
     <ClCompile Include="CliParser.cpp" />
     <ClCompile Include="CliReader.cpp" />
     <ClCompile Include="CmdLine.cpp" />
@@ -152,7 +154,9 @@
   <ItemGroup>
     <ClInclude Include="CliASCIIKywInterpreter.h" />
     <ClInclude Include="CliBinKwyInterpreter.h" />
+    <ClInclude Include="CliData.h" />
     <ClInclude Include="CliKwyInterpreter.h" />
+    <ClInclude Include="CliKwyLib.h" />
     <ClInclude Include="CliParser.h" />
     <ClInclude Include="CmdLine.h" />
     <ClInclude Include="Exceptions.h" />

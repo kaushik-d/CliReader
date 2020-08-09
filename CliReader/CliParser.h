@@ -1,7 +1,8 @@
 #pragma once
 #include <fstream>
 #include <filesystem>
-
+#include "CliData.h"
+#include "CliKwyInterpreter.h"
 
 class CliParser
 {
@@ -23,10 +24,13 @@ class CliParser
 	};
 
 public:
-	CliParser(const std::filesystem::path& fileName);
+
+	CliParser(const std::filesystem::path& fileName, CliData& cliData);
 	virtual ~CliParser() {};
 
 	void Initialize();
+	void ParseFile();
+
 	//void ParseStartLayerLong();
 	//void ParseStartLayerShort();
 	//void ParseStartPolyLineShort();
@@ -34,18 +38,24 @@ public:
 	//void ParseStartHatchesShort();
 	//void ParseStartHatchesLong();
 	void ReadBinarySection();
-	void ReadASCIISection(bool& binaryFormat, const std::string endSectionKeyword);
+	//void ReadASCIISection(bool& binaryFormat, const std::string endSectionKeyword);
 
 private:
 
-	bool isValidKeywordChar(const char c);
-	bool isValidCliChar(const char c);
-	bool isPastEndCmdChar(const char c);
-	bool isLineEnd(const char c);
-	void skipComment();
+	//bool isValidKeywordChar(const char c);
+	//bool isValidCliChar(const char c);
+	//bool isPastEndCmdChar(const char c);
+	//bool isLineEnd(const char c);
+	//void skipComment();
+
+	CliKwyInterpreter* m_interpreter{ nullptr };
+
+	void setASCIIInterpreter();
+	void setBinaryInterpreter();
 
 	std::ifstream m_infile;
 	std::filesystem::path m_fileName;
+	CliData& m_cliData;
 
 	std::vector<double> m_layerZ;
 	std::vector< polyLine > m_polylines;
