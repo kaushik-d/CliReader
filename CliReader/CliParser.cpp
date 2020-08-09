@@ -1,7 +1,9 @@
 #include <iostream>
 #include <cctype>
+#include <cstdint>
 #include "CliParser.h"
 #include "Exceptions.h"
+#include "CliBinKwyInterpreter.h"
 
 CliParser::CliParser(const std::filesystem::path& fileName) : m_fileName(fileName)
 {
@@ -65,13 +67,44 @@ void CliParser::skipComment() {
 	}
 }
 
-
 void CliParser::Initialize()
 {
 	m_infile.open(m_fileName, std::ios::binary | std::ios::in);
 	if (!m_infile.is_open()) {
 		throw FileNotFound(m_fileName.string());
 	}
+}
+
+void CliParser::ReadBinarySection() {
+
+	CliBinKwyInterpreter* intp = new CliBinKwyInterpreter(m_infile);
+
+	uint16_t CommandIndex;
+	while (m_infile.read((char*)&CommandIndex, sizeof(CommandIndex))) {
+		switch (CommandIndex) {
+		case StartLayerLong:
+			intp->ParseStartLayerLong();
+			break;
+		case StartLayerShort:
+			intp->ParseStartLayerShort();
+			break;
+		case StartPolyLineShort:
+			intp->ParseStartPolyLineShort();
+			break;
+		case StartPolyLineLong:
+			intp->ParseStartPolyLineLong();
+			break;
+		case StartHatchesShort:
+			intp->ParseStartHatchesShort();
+			break;
+		case StartHatchesLong:
+			intp->ParseStartHatchesLong();
+			break;
+		default:
+			throw std::runtime_error("Unknown command in binary : " + CommandIndex);
+		}
+	}
+
 }
 
 void CliParser::ReadASCIISection(bool& binaryFormat, const std::string endSectionKeyword = "") {
@@ -148,7 +181,7 @@ void CliParser::ReadASCIISection(bool& binaryFormat, const std::string endSectio
 								parameters += currC;
 							}
 							if (isLineEnd(currC)) {
-								std::cout << " : Parameter : " << parameters << std::endl;
+								std::cout << "Parameter : " << parameters << std::endl;
 								m_infile.seekg(-1, std::ios_base::cur);
 								break;
 							}

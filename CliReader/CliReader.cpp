@@ -9,6 +9,7 @@
 #include "CmdLine.h"
 #include "CliParser.h"
 
+/*
 bool isValidKeywordChar(const char c) {
 	// All keywords are written in ASCII upper case notation
 	return (c >= 'A' && c <= 'Z');
@@ -153,7 +154,7 @@ void readSection(std::ifstream& infile, bool& binaryFormat, const std::string en
 		}
 	}
 }
-
+*/
 
 int main(int argc, char** argv)
 {
@@ -187,6 +188,9 @@ int main(int argc, char** argv)
 	if (!binaryFormat) {
 		//readSection(infile, binaryFormat, "GEOMETRYEND");
 		parser.ReadASCIISection(binaryFormat, "GEOMETRYEND");
+	}
+	else {
+		parser.ReadBinarySection();
 	}
 	
 }
