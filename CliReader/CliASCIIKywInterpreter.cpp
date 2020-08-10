@@ -14,12 +14,12 @@ void CliASCIIKywInterpreter::InterpretGeometry()
 
 void CliASCIIKywInterpreter::ParameterValidity(const std::string& kwy, std::vector<std::string>& tokens, int minSize, int maxSize)
 {
-	if (minSize != -1) {
+	if (minSize < 0) {
 		if (tokens.size() < minSize) {
 			throw std::runtime_error("Insufficient parameters in kyword " + kwy + ".");
 		}
 	}
-	if (maxSize != -1) {
+	if (maxSize < 0) {
 		if (tokens.size() > maxSize) {
 		throw std::runtime_error("Extra parameters in kyword UNITS" + kwy + ".");
 		}
@@ -30,6 +30,7 @@ void CliASCIIKywInterpreter::ParseUnits(const std::string& kwy, std::vector<std:
 {
 	ParameterValidity(kwy, tokens, 1, 1);
 	m_cliData.setUnit(std::stof(tokens[0]));
+
 }
 
 void CliASCIIKywInterpreter::ParseVersion(const std::string& kwy, std::vector<std::string>& tokens)
@@ -46,8 +47,11 @@ void CliASCIIKywInterpreter::ParseAlign(const std::string& kwy, std::vector<std:
 
 void CliASCIIKywInterpreter::ParseLayer(const std::string& kwy, std::vector<std::string>& tokens)
 {
+	processPreviousLayer();
+
 	ParameterValidity(kwy, tokens, 1, 1);
 	double zLayer = std::stof(tokens[0]);
+	m_cliData.incrmentLayerIndex();
 	m_cliData.setCurrentLayerZ(zLayer);
 
 	LogLayer(zLayer);
@@ -135,18 +139,23 @@ void CliASCIIKywInterpreter::InterpretKyw(std::string& keyword, std::string& par
 	strutl::split(parameters, ',', parameterToken);
 
 	if (keyword == "BINARY") {
+		LogKwyParameters(keyword, parameters);
 		m_cliData.setFormat(Format::binary);
 	}
 	else if (keyword == "ASCII") {
+		LogKwyParameters(keyword, parameters);
 		m_cliData.setFormat(Format::ascii);
 	}
 	else if (keyword == "UNITS") {
+		LogKwyParameters(keyword, parameters);
 		ParseUnits(keyword, parameterToken);
 	}
 	else if (keyword == "VERSION") {
+		LogKwyParameters(keyword, parameters);
 		ParseVersion(keyword, parameterToken);
 	}
 	else if (keyword == "ALIGN") {
+		LogKwyParameters(keyword, parameters);
 		ParseVersion(keyword, parameterToken);
 	}
 	else if (keyword == "LAYER") {
@@ -154,6 +163,23 @@ void CliASCIIKywInterpreter::InterpretKyw(std::string& keyword, std::string& par
 	}
 	else if (keyword == "POLYLINE") {
 		ParsePolyline(keyword, parameterToken);
+	}
+	else if (keyword == "HEADERSTART")
+	{
+		LogKwyParameters(keyword, parameters);
+	}
+	else if (keyword == "HEADEREND")
+	{
+		LogKwyParameters(keyword, parameters);
+	}
+	else if (keyword == "GEOMETRYSTART")
+	{
+		LogKwyParameters(keyword, parameters);
+	}
+	else if (keyword == "GEOMETRYEND")
+	{
+		processPreviousLayer();
+		LogKwyParameters(keyword, parameters);
 	}
 
 	// More to come

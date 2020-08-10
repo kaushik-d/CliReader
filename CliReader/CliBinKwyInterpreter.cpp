@@ -38,18 +38,16 @@ void CliBinKwyInterpreter::InterpretGeometry()
 			throw std::runtime_error("Unknown command in binary : " + CommandIndex);
 		}
 	}
+
+	processPreviousLayer();
 }
 
 void CliBinKwyInterpreter::ParseStartLayerLong() {
-	//
-	// compute area and clear polylines of last layer
-	//
-
-		// get area
-	m_cliData.clearLayer();
 
 	float zLayer;
 	if (m_infile.read((char*)&zLayer, sizeof(zLayer))) {
+
+		processPreviousLayer();
 
 		LogLayer(zLayer);
 		//m_layerZ.push_back(m_unit * zLayer);
@@ -64,6 +62,8 @@ void CliBinKwyInterpreter::ParseStartLayerLong() {
 void CliBinKwyInterpreter::ParseStartLayerShort() {
 	uint16_t zLayer;
 	if (m_infile.read((char*)&zLayer, sizeof(zLayer))) {
+
+		processPreviousLayer();
 
 		LogLayer(zLayer);
 		m_cliData.incrmentLayerIndex();

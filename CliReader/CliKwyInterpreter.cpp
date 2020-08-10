@@ -1,11 +1,27 @@
 #include <iostream>
 #include "CliKwyInterpreter.h"
 
+void CliKwyInterpreter::processPreviousLayer()
+{
+	if (m_cliData.getLayerIndex() >= 0) {
+		m_cliData.layerArea();
+		m_cliData.printLayer();
+		m_cliData.clearLayer();
+	}
+}
 
 void CliKwyInterpreter::LogLayer(double zLayer) const
 {
 	std::cout << "Keyword : START LAYER" << std::endl;
 	std::cout << "Parameter : " << zLayer << std::endl;
+}
+
+void CliKwyInterpreter::LogKwyParameters(const std::string& kwy, const std::string& params)
+{
+	std::cout << "Keyword : " << kwy << std::endl;
+	if (!params.empty()) {
+		std::cout << "Parameter : " << params << std::endl;
+	}
 }
 
 void CliKwyInterpreter::LogPolyline(const PolyLine& polyLine) const

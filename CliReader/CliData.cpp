@@ -1,5 +1,7 @@
 #include <iostream>
 #include <iomanip>
+#include <algorithm>
+#include <iomanip>
 #include "CliData.h"
 
 void CliData::clearLayer()
@@ -8,9 +10,33 @@ void CliData::clearLayer()
 	m_polylines.clear();
 	m_hatches.clear();
 	m_layer_area = 0.0;
+	m_partArea.clear();
+}
+
+void CliData::layerArea()
+{
+	m_layer_area = 0;
+	for (const auto& polyline : m_polylines) {
+		auto partArea = polyline.polygonArea2D();
+		partArea *= (m_unit * m_unit);
+		auto iter = m_partArea.find(polyline.m_id);
+		if (iter != m_partArea.end()) {
+			iter->second += partArea;
+		}
+		else {
+			m_partArea[polyline.m_id] = partArea;
+		}
+		m_layer_area += partArea;
+	}
 }
 
 void CliData::printLayer()
 {
-	std::cout << std::setprecision(2) << std::fixed << "Layer Index: " << m_layerIndex << ", Layer Start Z: " << m_layerZ << ", Layer Part area: " << m_layer_area << std::endl;
+	std::cout << std::setprecision(2) << std::fixed << "Layer Index: " << m_layerIndex << ", Layer Start Z: " << m_layerZ * m_unit
+		<< ", Total Layer area = " << std::setprecision(3) << std::fixed <<  m_layer_area;
+	std::for_each(m_partArea.begin(), m_partArea.end(), 
+		[](std::pair<const int, double>& pair) { 
+			std::cout << ", Area for part " << pair.first << " = " << std::setprecision(3) << std::fixed << pair.second;
+		});
+	std::cout << std::endl;
 }

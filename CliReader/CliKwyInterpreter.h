@@ -34,8 +34,10 @@ protected:
 
 
 protected:
+	void LogKwyParameters(const std::string& kwy, const std::string& params);
 	void LogPolyline(const PolyLine& polyLine) const;
 	void LogHatches(const Hatch& hatch) const;
+	void processPreviousLayer();
 	void LogLayer(double zLayer) const;
 };
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "PolyLine.h"
 #include "Hatch.h"
+#include <map>
 
 enum class Format {
 	ascii = 0,
@@ -31,8 +32,10 @@ public:
 	bool is32bitAlign() { return m_align32bit; }
 
 	void incrmentLayerIndex() { m_layerIndex++; }
+	int getLayerIndex() { return m_layerIndex; }
 
 	void clearLayer();
+	void layerArea();
 	void printLayer();
 
 private:
@@ -54,5 +57,6 @@ private:
 	// Information drived from file data
 
 	double m_layer_area{ -1 };
+	std::map<int, double> m_partArea;
 };
 
