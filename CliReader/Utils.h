@@ -2,7 +2,11 @@
 #include <algorithm> 
 #include <cctype>
 #include <locale>
-
+#include <iterator>
+#include <sstream>
+#include <vector>
+#include <string>
+//
 namespace strutl
 {
     // trim from start (in place)
@@ -36,4 +40,18 @@ namespace strutl
         rtrim(s);
         return s;
     }
+
+    void split(const std::string& s, char delim, std::vector<std::string>& result) {
+        std::istringstream iss(s);
+        std::string item;
+        while (std::getline(iss, item, delim)) {
+            result.push_back(item);
+        }
+    }
+
+    //std::vector<std::string> split(const std::string& s, char delim) {
+    //    std::vector<std::string> elems;
+    //    split(s, delim, std::back_inserter(elems));
+    //    return elems;
+    //}
 }

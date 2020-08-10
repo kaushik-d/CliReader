@@ -45,16 +45,16 @@ void CliBinKwyInterpreter::ParseStartLayerLong() {
 	// compute area and clear polylines of last layer
 	//
 
-	if (!m_polylines.empty()) {
 		// get area
-		m_polylines.clear();
-	}
+	m_cliData.clearLayer();
 
 	float zLayer;
 	if (m_infile.read((char*)&zLayer, sizeof(zLayer))) {
 
 		LogLayer(zLayer);
-		m_layerZ.push_back(m_unit * zLayer);
+		//m_layerZ.push_back(m_unit * zLayer);
+		m_cliData.incrmentLayerIndex();
+		m_cliData.setCurrentLayerZ(zLayer);
 	}
 	else {
 		throw std::runtime_error("Error reading ParseStartLayerLong.");
@@ -66,7 +66,8 @@ void CliBinKwyInterpreter::ParseStartLayerShort() {
 	if (m_infile.read((char*)&zLayer, sizeof(zLayer))) {
 
 		LogLayer(zLayer);
-		m_layerZ.push_back(m_unit * zLayer);
+		m_cliData.incrmentLayerIndex();
+		m_cliData.setCurrentLayerZ(zLayer);
 	}
 	else {
 		throw std::runtime_error("Error reading ParseStartLayerShort.");
@@ -94,11 +95,11 @@ void CliBinKwyInterpreter::ParseStartPolyLineShort() {
 
 	LogPolyline(polyLine);
 
-	for (auto& point : polyLine.m_points) {
-		point *= m_unit;
-	}
+	//for (auto& point : polyLine.m_points) {
+	//	point *= m_unit;
+	//}
 
-	m_polylines.emplace_back(polyLine);
+	m_cliData.Ploylines().emplace_back(polyLine);
 }
 
 void CliBinKwyInterpreter::ParseStartPolyLineLong()
@@ -123,11 +124,11 @@ void CliBinKwyInterpreter::ParseStartPolyLineLong()
 
 	LogPolyline(polyLine);
 
-	for (auto& point : polyLine.m_points) {
-		point *= m_unit;
-	}
+	//for (auto& point : polyLine.m_points) {
+	//	point *= m_unit;
+	//}
 
-	m_polylines.emplace_back(polyLine);
+	m_cliData.Ploylines().emplace_back(polyLine);
 }
 
 void CliBinKwyInterpreter::ParseStartHatchesShort() {
@@ -151,11 +152,11 @@ void CliBinKwyInterpreter::ParseStartHatchesShort() {
 
 	LogHatches(hatch);
 
-	for (auto& point : hatch.m_points) {
-		point *= m_unit;
-	}
+	//for (auto& point : hatch.m_points) {
+	//	point *= m_unit;
+	//}
 
-	m_hatches.emplace_back(hatch);
+	m_cliData.Hatches().emplace_back(hatch);
 }
 
 void CliBinKwyInterpreter::ParseStartHatchesLong() {
@@ -179,10 +180,10 @@ void CliBinKwyInterpreter::ParseStartHatchesLong() {
 
 	LogHatches(hatch);
 
-	for (auto& point : hatch.m_points) {
-		point *= m_unit;
-	}
+	//for (auto& point : hatch.m_points) {
+	//	point *= m_unit;
+	//}
 
-	m_hatches.emplace_back(hatch);
+	m_cliData.Hatches().emplace_back(hatch);
 }
 

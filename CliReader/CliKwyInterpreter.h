@@ -27,10 +27,10 @@ protected:
 
 	std::filesystem::path m_fileName;
 
-	double m_unit{ 1 };
-	std::vector<double> m_layerZ;
-	std::vector<PolyLine> m_polylines;
-	std::vector<Hatch> m_hatches;
+	//double m_unit{ 1 };
+	//std::vector<double> m_layerZ;
+	//std::vector<PolyLine> m_polylines;
+	//std::vector<Hatch> m_hatches;
 
 
 protected:

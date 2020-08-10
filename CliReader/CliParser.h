@@ -7,21 +7,21 @@
 class CliParser
 {
 
-	enum commadIndex {
-		StartLayerLong = 127,
-		StartLayerShort = 128,
-		StartPolyLineShort = 129,
-		StartPolyLineLong = 130,
-		StartHatchesShort = 131,
-		StartHatchesLong = 132
-	};
+	//enum commadIndex {
+	//	StartLayerLong = 127,
+	//	StartLayerShort = 128,
+	//	StartPolyLineShort = 129,
+	//	StartPolyLineLong = 130,
+	//	StartHatchesShort = 131,
+	//	StartHatchesLong = 132
+	//};
 
-	struct polyLine {
-		unsigned int id;
-		unsigned int dir;
-		unsigned int nPoints;
-		std::vector<double> points;
-	};
+	//struct polyLine {
+	//	unsigned int id;
+	//	unsigned int dir;
+	//	unsigned int nPoints;
+	//	std::vector<double> points;
+	//};
 
 public:
 
@@ -57,9 +57,9 @@ private:
 	std::filesystem::path m_fileName;
 	CliData& m_cliData;
 
-	std::vector<double> m_layerZ;
-	std::vector< polyLine > m_polylines;
+	//std::vector<double> m_layerZ;
+	//std::vector< polyLine > m_polylines;
 
-	double m_unit{ 1 };
+	//double m_unit{ 1 };
 };
 
