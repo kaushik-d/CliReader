@@ -5,6 +5,7 @@
 
 struct optProf {
 	bool required;
+	bool valueRequired;
 	std::string help;
 };
 

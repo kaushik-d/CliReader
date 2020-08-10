@@ -9,8 +9,10 @@ bool CmdLine::Initialize(int argc, char** argv) {
 	}
 		 
 	m_validOptions = {
-		{"h", {false, "Display help."} },
-		{"f", {true,  "Input CLI file."} }
+	// Option, { required?, value required?, Help }
+		{"h", {false, false, "Display help."} },
+		{"f", {true,  true, "Input CLI file."} },
+		{"v", {false,  true, "Log level. 0 - 3."} }
 	};
 
 	bool CmlLineError(false);
@@ -49,13 +51,22 @@ bool CmdLine::Initialize(int argc, char** argv) {
 	for (auto iter : m_validOptions) {
 		if (iter.second.required) {
 			if (!isDefined(iter.first)) {
-				std::cout << "\nCommand line option " << iter.first << " is required." << std::endl;
+				std::cout << "\nCommand line option -" << iter.first << " is required." << std::endl;
 				CmlLineError = true;
+			}
+		}
+		if (isDefined(iter.first)) {
+			if (iter.second.valueRequired) {
+				if (getString(iter.first).empty()) {
+					std::cout << "\nCommand line option -" << iter.first << " must have a value." << std::endl;
+					CmlLineError = true;
+				}
 			}
 		}
 	}
 
 	if (CmlLineError) {
+		displayHelp();
 		return false;
 	}
 
@@ -81,7 +92,7 @@ std::string CmdLine::getString(const std::string& opt) const
 int CmdLine::getInt(const std::string& opt) const
 {
 	auto iter = m_opts.find(opt);
-	if (iter != m_opts.end()) {
+	if (iter == m_opts.end()) {
 		return 0;
 	}
 	else {
@@ -92,7 +103,7 @@ int CmdLine::getInt(const std::string& opt) const
 double CmdLine::getDouble(const std::string& opt) const
 {
 	auto iter = m_opts.find(opt);
-	if (iter != m_opts.end()) {
+	if (iter == m_opts.end()) {
 		return 0;
 	}
 	else {
@@ -104,7 +115,7 @@ void CmdLine::displayHelp()
 {
 	std::cout << "\n CLI file reader." << std::endl;
 	for (auto& opts : m_validOptions) {
-		std::cout << opts.first << " : " << (opts.second.required ? " (Required) " : " (Options) ") << " : " << opts.second.help << std::endl;
+		std::cout <<"\t-" << opts.first << " : " << (opts.second.required ? " (required) " : " (optional) ") << " : " << opts.second.help << std::endl;
 	}
 	std::cout << std::endl;
 }

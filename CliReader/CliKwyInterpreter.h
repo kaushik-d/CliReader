@@ -7,33 +7,22 @@ class CliKwyInterpreter
 {
 public:
 
-	CliKwyInterpreter(std::ifstream& infile, CliData& cliData) 
-		: m_infile(infile), m_cliData(cliData) {}
+	CliKwyInterpreter(std::ifstream& infile, CliData& cliData);
 
 	virtual void InterpretHeader() = 0;
 	virtual void InterpretGeometry() = 0;
 
-	//virtual void ParseStartLayerLong() = 0;
-	//virtual void ParseStartLayerShort() = 0;
-	//virtual void ParseStartPolyLineShort() = 0;
-	//virtual void ParseStartPolyLineLong() = 0;
-	//virtual void ParseStartHatchesShort() = 0;
-	//virtual void ParseStartHatchesLong() = 0;
+	void setLogLevel(int logLevel) { m_logLevel = logLevel; }
 
 protected:
-
-	std::ifstream& m_infile;
-	CliData& m_cliData;
 
 	std::filesystem::path m_fileName;
+	std::ifstream& m_infile;
 
-	//double m_unit{ 1 };
-	//std::vector<double> m_layerZ;
-	//std::vector<PolyLine> m_polylines;
-	//std::vector<Hatch> m_hatches;
+	CliData& m_cliData;
 
+	int m_logLevel{ 0 };
 
-protected:
 	void LogKwyParameters(const std::string& kwy, const std::string& params);
 	void LogPolyline(const PolyLine& polyLine) const;
 	void LogHatches(const Hatch& hatch) const;
