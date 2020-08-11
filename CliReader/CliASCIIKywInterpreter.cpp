@@ -21,7 +21,7 @@ void CliASCIIKywInterpreter::ParameterValidity(const std::string& kwy, std::vect
 	}
 	if (maxSize < 0) {
 		if (tokens.size() > maxSize) {
-		throw std::runtime_error("Extra parameters in kyword UNITS" + kwy + ".");
+			throw std::runtime_error("Extra parameters in kyword UNITS" + kwy + ".");
 		}
 	}
 }
@@ -29,6 +29,14 @@ void CliASCIIKywInterpreter::ParameterValidity(const std::string& kwy, std::vect
 void CliASCIIKywInterpreter::ParseUnits(const std::string& kwy, std::vector<std::string>& tokens)
 {
 	ParameterValidity(kwy, tokens, 1, 1);
+	m_cliData.setUnit(std::stof(tokens[0]));
+
+}
+
+void CliASCIIKywInterpreter::ParseDimension(const std::string& kwy, std::vector<std::string>& tokens)
+{
+	ParameterValidity(kwy, tokens, 6, 6);
+	std::transform(tokens.begin(), tokens.end(), m_cliData.Dimension().begin(), [](std::string& token) { return std::stof(token); });
 	m_cliData.setUnit(std::stof(tokens[0]));
 
 }
@@ -80,6 +88,7 @@ bool CliASCIIKywInterpreter::isValidKeywordChar(const char c) const {
 
 bool CliASCIIKywInterpreter::isValidCliChar(const char c) const {
 	// Only the characters A...Z, a...z, , ., 0...9, $ and the separators (section 2.4) are interpreted. All other characters will be ignored.
+	// - and + should be valid too
 	return (
 		(c >= 'A' && c <= 'Z') ||
 		(c >= 'a' && c <= 'z') ||
@@ -87,6 +96,8 @@ bool CliASCIIKywInterpreter::isValidCliChar(const char c) const {
 		(c >= '0' && c <= '9') ||
 		c == '$' ||
 		c == '/' ||
+		c == '-' ||
+		c == '+' ||
 		c == ',' ||
 		std::isspace(c)
 		);
@@ -115,7 +126,6 @@ void CliASCIIKywInterpreter::skipComment() {
 				if (currC2[0] == '/' && currC2[1] == '/') {
 					// end of keyword
 					return;
-
 				}
 			}
 			if (m_infile.eof()) {
@@ -149,6 +159,10 @@ void CliASCIIKywInterpreter::InterpretKyw(std::string& keyword, std::string& par
 	else if (keyword == "UNITS") {
 		LogKwyParameters(keyword, parameters);
 		ParseUnits(keyword, parameterToken);
+	}
+	else if (keyword == "DIMENSION") {
+		LogKwyParameters(keyword, parameters);
+		ParseDimension(keyword, parameterToken);
 	}
 	else if (keyword == "VERSION") {
 		LogKwyParameters(keyword, parameters);
@@ -265,11 +279,12 @@ void CliASCIIKywInterpreter::ReadASCIISection(const std::string endSectionKeywor
 							}
 						}
 					}
-
 				}
 			}
 
-			InterpretKyw(keyword, parameters);
+			if (keyywordRead) {
+				InterpretKyw(keyword, parameters);
+			}
 
 		}
 		if (!reachedSectionEnd && !m_infile.eof()) {

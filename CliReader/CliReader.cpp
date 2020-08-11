@@ -10,24 +10,27 @@
 
 int main(int argc, char** argv)
 {
-	CmdLine& cmd = CmdLine::Instance();
-	if (!cmd.Initialize(argc, argv)) {
-		exit(EXIT_FAILURE);
-	}
-
-	std::filesystem::path fileName(cmd.getString("f"));
-	fileName.make_preferred();
-
-	CliData cliData;
-
-	CliParser parser(fileName, cliData);
-
 	try {
+		CmdLine& cmd = CmdLine::Instance();
+		if (!cmd.Initialize(argc, argv)) {
+			exit(EXIT_FAILURE);
+		}
+
+		std::filesystem::path fileName(cmd.getString("f"));
+		fileName.make_preferred();
+
+		CliData cliData;
+
+		CliParser parser(fileName, cliData);
+
 		parser.Initialize();
 		parser.ParseFile();
 	}
-	catch (...) {
-		std::cout << "SomethingWentWrong";
+	catch (std::runtime_error& e) {
+		std::cout << "Error : " << e.what() << std::endl;
 	}
-	
+	catch (...) {
+		std::cout << "Error : SYSTEM ERROR" << std::endl ;
+	}
+
 }

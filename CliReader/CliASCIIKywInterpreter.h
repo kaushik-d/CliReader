@@ -25,6 +25,7 @@ private:
 
 	void ParameterValidity(const std::string& kwy, std::vector<std::string>& tokens, int minSize, int maxSize);
 	void ParseUnits(const std::string& kwy, std::vector<std::string>& tokens);
+	void ParseDimension(const std::string& kwy, std::vector<std::string>& tokens);
 	void ParseVersion(const std::string& kwy, std::vector<std::string>& tokens);
 	void ParseAlign(const std::string& kwy, std::vector<std::string>& tokens);
 	void ParseLayer(const std::string& kwy, std::vector<std::string>& tokens);

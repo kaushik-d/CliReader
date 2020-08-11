@@ -1,7 +1,10 @@
 #pragma once
+#include <map>
+#include <array>
+#include <limits>
+
 #include "PolyLine.h"
 #include "Hatch.h"
-#include <map>
 
 enum class Format {
 	ascii = 0,
@@ -19,7 +22,7 @@ public:
 	void setVersion(int ver) { m_version = ver; }
 
 	double getCurrentLayerZ() const { return m_layerZ; }
-	void setCurrentLayerZ( double z) { m_layerZ = z; }
+	void setCurrentLayerZ(double z) { m_layerZ = z; }
 
 	std::vector<PolyLine>& Ploylines() { return m_polylines; }
 	std::vector<Hatch>& Hatches() { return m_hatches; }
@@ -33,10 +36,13 @@ public:
 
 	void incrmentLayerIndex() { m_layerIndex++; }
 	int getLayerIndex() { return m_layerIndex; }
+	std::array<double, 6>& Dimension() { return m_dimension; }
 
 	void clearLayer();
 	void layerArea();
 	void printLayer();
+
+	void printLayerInSVG();
 
 private:
 
@@ -53,6 +59,12 @@ private:
 
 	std::vector<PolyLine> m_polylines;
 	std::vector<Hatch> m_hatches;
+	std::array<double, 6> m_dimension;
+	std::array<double, 4> m_dimFromLayer
+	{
+		std::numeric_limits<double>::max(),std::numeric_limits<double>::max(),
+		std::numeric_limits<double>::lowest(),std::numeric_limits<double>::lowest()
+	};
 
 	// Information drived from file data
 

@@ -1,4 +1,6 @@
+#include <array>
 #include "PolyLine.h"
+
 
 double PolyLine::polygonArea2D() const
 {
@@ -31,4 +33,17 @@ double PolyLine::polygonArea2D() const
 	}
 
 	return area;
+}
+
+void PolyLine::polygonBBox(std::array<double, 4>& BBox2d) const {
+	const int iNumPoints = m_points.size() / 2;
+
+	for (unsigned int i = 0;  i < iNumPoints; i++) {
+
+		if (BBox2d[0] > m_points[i * 2]) BBox2d[0] = m_points[i * 2];
+		if (BBox2d[1] > m_points[i * 2 + 1]) BBox2d[1] = m_points[i * 2 + 1];
+		if (BBox2d[2] < m_points[i * 2]) BBox2d[2] = m_points[i * 2];
+		if (BBox2d[3] < m_points[i * 2 + 1]) BBox2d[3] = m_points[i * 2 + 1];
+	}
+
 }

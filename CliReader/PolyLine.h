@@ -16,5 +16,6 @@ public:
 	unsigned int m_nPoints;
 	std::vector<double> m_points;
 	double polygonArea2D() const;
+	void polygonBBox(std::array<double, 4>& BBox2d) const;
 };
 
