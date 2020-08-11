@@ -2,6 +2,7 @@
 #include <map>
 #include <array>
 #include <limits>
+#include <filesystem>
 
 #include "PolyLine.h"
 #include "Hatch.h"
@@ -14,6 +15,12 @@ enum class Format {
 class CliData
 {
 public:
+	CliData();
+	virtual ~CliData() {};
+
+	CliData(const CliData& c) = delete;
+	CliData& operator=(const CliData& c) = delete;
+
 	Format getFormat() const { return m_format; }
 	void setFormat(Format format) { m_format = format; }
 
@@ -59,7 +66,12 @@ private:
 
 	std::vector<PolyLine> m_polylines;
 	std::vector<Hatch> m_hatches;
-	std::array<double, 6> m_dimension;
+	std::array<double, 6> m_dimension
+	{
+		std::numeric_limits<double>::max(), std::numeric_limits<double>::max(), std::numeric_limits<double>::max(),
+		std::numeric_limits<double>::lowest(), std::numeric_limits<double>::lowest(), std::numeric_limits<double>::lowest()
+	};
+
 	std::array<double, 4> m_dimFromLayer
 	{
 		std::numeric_limits<double>::max(),std::numeric_limits<double>::max(),
@@ -67,8 +79,12 @@ private:
 	};
 
 	// Information drived from file data
-
 	double m_layer_area{ -1 };
 	std::map<int, double> m_partArea;
+
+	// html file
+	bool m_writeHTML{ false };
+	std::filesystem::path m_path;
+	std::filesystem::path m_cliFileName;
 };
 

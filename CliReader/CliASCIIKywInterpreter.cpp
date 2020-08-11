@@ -37,8 +37,6 @@ void CliASCIIKywInterpreter::ParseDimension(const std::string& kwy, std::vector<
 {
 	ParameterValidity(kwy, tokens, 6, 6);
 	std::transform(tokens.begin(), tokens.end(), m_cliData.Dimension().begin(), [](std::string& token) { return std::stof(token); });
-	m_cliData.setUnit(std::stof(tokens[0]));
-
 }
 
 void CliASCIIKywInterpreter::ParseVersion(const std::string& kwy, std::vector<std::string>& tokens)

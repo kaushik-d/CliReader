@@ -4,10 +4,20 @@
 #include <algorithm>
 #include <iomanip>
 #include <string>
-#include <filesystem>
 
 #include "CliData.h"
 #include "CmdLine.h"
+
+CliData::CliData()
+{
+	auto& cmd = CmdLine::Instance();
+	m_writeHTML = cmd.isDefined("html");
+	if (m_writeHTML) {
+		m_path = CmdLine::Instance().getString("f");
+		m_path.make_preferred();
+		m_cliFileName = m_path.filename();
+	}
+}
 
 void CliData::clearLayer()
 {
@@ -53,6 +63,8 @@ void CliData::printLayer()
 
 void CliData::printLayerInSVG()
 {
+	if (!m_writeHTML) return;
+
 	double BBoxW = m_dimFromLayer[2] - m_dimFromLayer[0];
 	double BBoxH = m_dimFromLayer[3] - m_dimFromLayer[1];
 	double ratio = BBoxH / BBoxW;
@@ -71,10 +83,8 @@ void CliData::printLayerInSVG()
 	//100,10 40,198 190,78 10,78 160,198
 	std::string ppts;
 	for (const auto& polyline : m_polylines) {
-		if (polyline.m_dir != polyline.open) {
 			ppts += R"(
-<polygon )";
-			ppts += "id=Layer_" + std::to_string(getLayerIndex()) + R"( points=")";
+<polyline points=")";
 			for (int i = 0; i < 2 * polyline.m_nPoints; i++) {
 				double coord = (double)(polyline.m_points[i] - (i % 2 == 0 ? m_dimFromLayer[0] : m_dimFromLayer[1])) * unit;
 				ppts += std::to_string(coord);
@@ -85,24 +95,21 @@ void CliData::printLayerInSVG()
 					ppts += " ";
 				}
 			}
-			ppts += R"(" style="fill:lime;stroke:purple;stroke-width:1;fill-rule:evenodd;" />
+			switch (polyline.m_dir) {
+			case polyline.open:
+				ppts += R"(" style="fill:white;stroke:purple;stroke-width:1;" />
 )";
-		}
-		else {
-			ppts += R"(
-<polyline points=")";
-			for (int i = 0; i < 2 * polyline.m_nPoints; i++) {
-				ppts += std::to_string(polyline.m_points[i] * unit);
-				if (i % 2 == 0 && i != 2 * polyline.m_nPoints - 1) {
-					ppts += ",";
-				}
-				else {
-					ppts += " ";
-				}
+				break;
+			case polyline.clockwise:
+				ppts += R"(" style="fill:white;stroke:blue;stroke-width:1;" />
+)";
+				break;
+			case polyline.counterClockwise:
+				ppts += R"(" style="fill:white;stroke:red;stroke-width:1;" />
+)";
+				break;
 			}
-			ppts += R"(" style="fill:lime;stroke:purple;stroke-width:1;fill-rule:evenodd;" />
-)";
-		}
+	//	}
 	}
 
 	std::string htmlTail =
@@ -129,18 +136,13 @@ function hideSVG() {
 
 	std::string html = htmlHead + ppts + htmlTail;
 
-
-	std::filesystem::path path = CmdLine::Instance().getString("f");
-	path.make_preferred();
-
-	auto cliFileName = path.filename();
 	std::filesystem::path htmlFileName( "Layer_" + std::to_string(getLayerIndex()) + "_");
-	htmlFileName += cliFileName;
+	htmlFileName += m_cliFileName;
 	htmlFileName.replace_extension("html");
 
-	path.replace_filename(htmlFileName);
+	m_path.replace_filename(htmlFileName);
 
-	std::ofstream htmlFile(path);
+	std::ofstream htmlFile(m_path);
 
 	htmlFile << html;
 
