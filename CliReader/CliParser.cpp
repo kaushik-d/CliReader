@@ -72,7 +72,7 @@ void CliParser::Initialize()
 {
 	m_infile.open(m_fileName, std::ios::binary | std::ios::in);
 	if (!m_infile.is_open()) {
-		throw FileNotFound(m_fileName.string());
+		throw FileNotFound(m_fileName.string() + " file not found.");
 	}
 }
 

@@ -66,7 +66,7 @@ void CliASCIIKywInterpreter::ParseLayer(const std::string& kwy, std::vector<std:
 void CliASCIIKywInterpreter::ParsePolyline(const std::string& kwy, std::vector<std::string>& tokens)
 {
 	ParameterValidity(kwy, tokens, 3, -1);
-	PolyLine polyline{ std::stoi(tokens[0]), std::stoi(tokens[1]), std::stoi(tokens[2]) };
+	PolyLine polyline{ std::stoul(tokens[0]), std::stoul(tokens[1]), std::stoul(tokens[2]) };
 
 	int maxNumParam = 3 + 2 * polyline.m_nPoints;
 	ParameterValidity(kwy, tokens, maxNumParam, maxNumParam);

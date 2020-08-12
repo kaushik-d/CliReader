@@ -9,14 +9,14 @@ double PolyLine::polygonArea2D() const
 
 	if (m_dir == open) return 0.0;
 
-	const int iNumVertexPolygon = m_points.size() / 2 - 1;
+	const size_t iNumVertexPolygon = m_points.size() / 2 - 1;
 	if (iNumVertexPolygon < 3) {
 		return 0.0;
 	}
 
 	double area(0);
 
-	for (int i = 1, j = 2, k = 0; i < iNumVertexPolygon; i++, j++, k++) {
+	for (unsigned int i = 1, j = 2, k = 0; i < iNumVertexPolygon; i++, j++, k++) {
 
 		area += m_points[2 * i] * (m_points[2 * j + 1] - m_points[2 * k + 1]);
 	}
@@ -36,7 +36,7 @@ double PolyLine::polygonArea2D() const
 }
 
 void PolyLine::polygonBBox(std::array<double, 4>& BBox2d) const {
-	const int iNumPoints = m_points.size() / 2;
+	const size_t iNumPoints = m_points.size() / 2;
 
 	for (unsigned int i = 0;  i < iNumPoints; i++) {
 

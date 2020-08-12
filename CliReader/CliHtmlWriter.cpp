@@ -1,4 +1,6 @@
 #include <fstream>
+#include <sstream> 
+#include <iomanip>
 #include "CliHtmlWriter.h"
 #include "CmdLine.h"
 
@@ -45,7 +47,7 @@ void CliHtmlWriter::CliWriteHtmlFile()
 		for (const auto& polyline : polylines.second) {
 			ppts += R"(
 <polyline id= Layer_)" + std::to_string(layerId) + R"( points=")";
-			for (int i = 0; i < 2 * polyline.m_nPoints; i++) {
+			for (unsigned int i = 0; i < 2 * polyline.m_nPoints; i++) {
 				double coord = (double)(polyline.m_points[i] - (i % 2 == 0 ? m_dimFromLayer[0] : m_dimFromLayer[1])) * unit;
 				ppts += std::to_string(coord);
 				if (i % 2 == 0 && i != 2 * polyline.m_nPoints - 1) {
@@ -70,7 +72,9 @@ void CliHtmlWriter::CliWriteHtmlFile()
 				break;
 			}
 		}
-		ppts += R"(<text x = "25" y = "25" fill = "bloack">)" + std::to_string(m_area[layerId]) + R"( mm^2</text>)";
+		std::stringstream  area;
+		area << std::setprecision(3) << std::fixed << m_area[layerId];
+		ppts += R"(<text x = "25" y = "25" fill = "bloack">)" + area.str() + R"( mm^2</text>)";
 		layerId++;
 	}
 	ppts += R"(</svg>)";
