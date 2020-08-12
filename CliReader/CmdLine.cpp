@@ -13,7 +13,7 @@ bool CmdLine::Initialize(int argc, char** argv) {
 		{"h", {false, false, "Display help."} },
 		{"f", {true,  true, "Input CLI file."} },
 		{"v", {false,  true, "Log level. 0 - 3."} },
-		{"html", {false,  false, "Generate HTML output."} }
+		{"html", {false,  true, "Generate HTML output."} }
 	};
 
 	bool CmlLineError(false);

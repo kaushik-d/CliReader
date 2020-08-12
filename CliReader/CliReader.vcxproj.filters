@@ -45,6 +45,9 @@
     <ClCompile Include="CliKwyLib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CliHtmlWriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CmdLine.h">
@@ -78,6 +81,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CliKwyLib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CliHtmlWriter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

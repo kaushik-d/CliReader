@@ -72,19 +72,12 @@ private:
 		std::numeric_limits<double>::lowest(), std::numeric_limits<double>::lowest(), std::numeric_limits<double>::lowest()
 	};
 
-	std::array<double, 4> m_dimFromLayer
-	{
-		std::numeric_limits<double>::max(),std::numeric_limits<double>::max(),
-		std::numeric_limits<double>::lowest(),std::numeric_limits<double>::lowest()
-	};
-
 	// Information drived from file data
 	double m_layer_area{ -1 };
 	std::map<int, double> m_partArea;
 
 	// html file
 	bool m_writeHTML{ false };
-	std::filesystem::path m_path;
-	std::filesystem::path m_cliFileName;
+	int m_htmlLayer{ 0 };
 };
 

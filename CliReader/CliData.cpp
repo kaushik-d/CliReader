@@ -7,16 +7,13 @@
 
 #include "CliData.h"
 #include "CmdLine.h"
+#include "CliHtmlWriter.h"
 
 CliData::CliData()
 {
 	auto& cmd = CmdLine::Instance();
 	m_writeHTML = cmd.isDefined("html");
-	if (m_writeHTML) {
-		m_path = CmdLine::Instance().getString("f");
-		m_path.make_preferred();
-		m_cliFileName = m_path.filename();
-	}
+	if (m_writeHTML) m_htmlLayer = cmd.getInt("html");
 }
 
 void CliData::clearLayer()
@@ -32,8 +29,6 @@ void CliData::layerArea()
 {
 	m_layer_area = 0;
 	for (const auto& polyline : m_polylines) {
-
-		polyline.polygonBBox(m_dimFromLayer);
 
 		auto partArea = polyline.polygonArea2D();
 		partArea *= (m_unit * m_unit);
@@ -65,87 +60,7 @@ void CliData::printLayerInSVG()
 {
 	if (!m_writeHTML) return;
 
-	double BBoxW = m_dimFromLayer[2] - m_dimFromLayer[0];
-	double BBoxH = m_dimFromLayer[3] - m_dimFromLayer[1];
-	double ratio = BBoxH / BBoxW;
-	double widthSVG = 500;
-	double heightSVG = widthSVG * ratio;
-	double unit = widthSVG / BBoxW;
-
-	std::string htmlHead =
-		R"(
-<!DOCTYPE html>
-<html>
-<body>
-
-<svg width=)"+ std::to_string(widthSVG) + " height="+ std::to_string(heightSVG) + R"(>
-)";
-	//100,10 40,198 190,78 10,78 160,198
-	std::string ppts;
-	for (const auto& polyline : m_polylines) {
-			ppts += R"(
-<polyline points=")";
-			for (int i = 0; i < 2 * polyline.m_nPoints; i++) {
-				double coord = (double)(polyline.m_points[i] - (i % 2 == 0 ? m_dimFromLayer[0] : m_dimFromLayer[1])) * unit;
-				ppts += std::to_string(coord);
-				if (i % 2 == 0 && i != 2 * polyline.m_nPoints - 1) {
-					ppts += ",";
-				}
-				else {
-					ppts += " ";
-				}
-			}
-			switch (polyline.m_dir) {
-			case polyline.open:
-				ppts += R"(" style="fill:white;stroke:purple;stroke-width:1;" />
-)";
-				break;
-			case polyline.clockwise:
-				ppts += R"(" style="fill:white;stroke:blue;stroke-width:1;" />
-)";
-				break;
-			case polyline.counterClockwise:
-				ppts += R"(" style="fill:white;stroke:red;stroke-width:1;" />
-)";
-				break;
-			}
-	//	}
+	if (getLayerIndex() == m_htmlLayer) {
+		CliHtmlWriter::Instance().addLayer(getLayerIndex(), m_layer_area, m_polylines);
 	}
-
-	std::string htmlTail =
-		R"("</svg>
-</body>
-<script>
-function hideSVG() {
-  var style = document.getElementById("myRect").style.display;
-  if(style === "none") {
-    matches = document.querySelectorAll('[id=myRect]');
-    for (const match of matches.values()) {
-	  	match.style.display = "block";
-		};
-  }
-  else {
-    matches = document.querySelectorAll('[id=myRect]');
-    for (const match of matches.values()) {
-	  	match.style.display = "none";
-		};
-  }
-</script>
-</html>
-)";
-
-	std::string html = htmlHead + ppts + htmlTail;
-
-	std::filesystem::path htmlFileName( "Layer_" + std::to_string(getLayerIndex()) + "_");
-	htmlFileName += m_cliFileName;
-	htmlFileName.replace_extension("html");
-
-	m_path.replace_filename(htmlFileName);
-
-	std::ofstream htmlFile(m_path);
-
-	htmlFile << html;
-
-	htmlFile.close();
-
 }
