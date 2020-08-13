@@ -1,4 +1,7 @@
 #include <iostream>
+#include <sstream>
+#include <exception>
+
 #include "CliASCIIKywInterpreter.h"
 #include "Utils.h"
 
@@ -120,14 +123,33 @@ void CliASCIIKywInterpreter::skipComment() {
 	if (m_infile.read(currC2, sizeof(currC2))) {
 		if (currC2[0] == '/' && currC2[1] == '/') {
 			// Start of comment
-			while (m_infile.read(currC2, sizeof(currC2))) {
-				if (currC2[0] == '/' && currC2[1] == '/') {
-					// end of keyword
-					return;
+			char currC;
+			std::stringstream comment;
+			comment << currC2[0] << currC2[1];
+			while (m_infile.read(&currC, sizeof(currC))) {
+				if (currC == '/') {
+					if (m_infile.read(&currC, sizeof(currC))) {
+						if (currC == '/') {
+							// end of keyword
+							return;
+						}
+						else {
+							comment << " Invalid comment.";
+							throw std::runtime_error(comment.str());
+						}
+					}
+					else {
+						comment << " Invalid comment.";
+						throw std::runtime_error(comment.str());
+					}
+				}
+				else {
+					comment << currC;
 				}
 			}
 			if (m_infile.eof()) {
-				std::cout << "\n *** Err \n";
+				comment << " Invalid comment.";
+				throw std::runtime_error(comment.str());
 			}
 		}
 		else {
@@ -213,6 +235,7 @@ void CliASCIIKywInterpreter::ReadASCIISection(const std::string endSectionKeywor
 				keyword.clear();
 				parameters.clear();
 
+				// Read the keyword
 				char currC;
 				while (!reachedSectionEnd && m_infile.read(&currC, sizeof(currC))) {
 					if (!isValidCliChar(currC)) {
@@ -223,6 +246,7 @@ void CliASCIIKywInterpreter::ReadASCIISection(const std::string endSectionKeywor
 							// Start of a comment
 							m_infile.seekg(-1, std::ios::cur);
 							skipComment();
+							continue;
 						}
 					}
 					if (isValidKeywordChar(currC))
@@ -247,6 +271,7 @@ void CliASCIIKywInterpreter::ReadASCIISection(const std::string endSectionKeywor
 				m_infile.seekg(-1, std::ios_base::cur);
 			}
 
+			// read parameters
 			if (keyywordRead && !reachedSectionEnd) {
 				char currC;
 				while (!reachedSectionEnd && m_infile.read(&currC, sizeof(currC))) {
@@ -264,12 +289,18 @@ void CliASCIIKywInterpreter::ReadASCIISection(const std::string endSectionKeywor
 					if (currC == '/') {
 						char currC;
 						while (!reachedSectionEnd && m_infile.read(&currC, sizeof(currC))) {
-							if (isValidCliChar(currC) && !isLineEnd(currC)) {
-								parameters += currC;
-							}
-							if (isLineEnd(currC)) {
+							if (currC == '/') {
+								// May be start of a parameter block
+								if (m_infile.peek() == '/') {
+									m_infile.seekg(-1, std::ios::cur);
+									skipComment();
+									continue;
+								}
+							} else if (isLineEnd(currC)) {
 								m_infile.seekg(-1, std::ios_base::cur);
 								break;
+							} else if (isValidCliChar(currC) && !isLineEnd(currC)) {
+								parameters += currC;
 							}
 						}
 					}
