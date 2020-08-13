@@ -25,6 +25,7 @@ double PolyLine::polygonArea2D() const
 
 	area = area / 2.0;
 
+	// The value of "dir " overwrites the order of listed points if there is a mismatch.
 	if (m_dir == counterClockwise && area < 0.0) {
 		area = -area;
 	}

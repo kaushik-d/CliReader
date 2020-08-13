@@ -23,7 +23,7 @@ private:
 	void InterpretKyw(std::string& keyword, std::string& parameters);
 	void ReadASCIISection(const std::string endSectionKeyword);
 
-	void ParameterValidity(const std::string& kwy, std::vector<std::string>& tokens, int minSize, int maxSize);
+	void ParameterValidity(const std::string& kwy, std::vector<std::string>& tokens, size_t minSize, size_t maxSize);
 	void ParseUnits(const std::string& kwy, std::vector<std::string>& tokens);
 	void ParseDimension(const std::string& kwy, std::vector<std::string>& tokens);
 	void ParseVersion(const std::string& kwy, std::vector<std::string>& tokens);

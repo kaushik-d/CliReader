@@ -20,15 +20,14 @@ private:
 	void ParseStartLayerLong();
 
 	template<class T, int N>
-	void ParseStartLayerShort();
+	void ParseStartLayer();
 
 	template<class Pram_t, int Param_N, class Data_t, int Id, int Dir, int Npt>
-	void ParseStartPolyLineShort();
-	void ParseStartPolyLineLong();
+	void ParseStartPolyLine();
 
 	template<class Pram_t, int Param_N, class Data_t, int Id, int Npt>
-	void ParseStartHatchesShort();
-	void ParseStartHatchesLong();
+	void ParseStartHatches();
+
 	void InterpretBinKwy(BinKeyword kwy);
 
 };

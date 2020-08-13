@@ -12,7 +12,7 @@ void CliASCIIKywInterpreter::InterpretGeometry()
 	ReadASCIISection("GEOMETRYEND");
 }
 
-void CliASCIIKywInterpreter::ParameterValidity(const std::string& kwy, std::vector<std::string>& tokens, int minSize, int maxSize)
+void CliASCIIKywInterpreter::ParameterValidity(const std::string& kwy, std::vector<std::string>& tokens, size_t minSize, size_t maxSize)
 {
 	if (minSize < 0) {
 		if (tokens.size() < minSize) {
@@ -68,7 +68,7 @@ void CliASCIIKywInterpreter::ParsePolyline(const std::string& kwy, std::vector<s
 	ParameterValidity(kwy, tokens, 3, -1);
 	PolyLine polyline{ std::stoul(tokens[0]), std::stoul(tokens[1]), std::stoul(tokens[2]) };
 
-	int maxNumParam = 3 + 2 * polyline.m_nPoints;
+	size_t maxNumParam = 3 + 2 * polyline.m_nPoints;
 	ParameterValidity(kwy, tokens, maxNumParam, maxNumParam);
 
 	std::transform(tokens.begin() + 3, tokens.end(), std::back_inserter(polyline.m_points), [](const std::string& str) {return std::stod(str); });
@@ -229,11 +229,8 @@ void CliASCIIKywInterpreter::ReadASCIISection(const std::string endSectionKeywor
 					{
 						keyword += currC;
 					}
-					//if (keyword == "BINARY") {
-					//	m_cliData.setFormat(Format::binary);
-					//}
 					if (isPastEndCmdChar(currC) || keyword == endSectionKeyword) {
-						//std::cout << "Keyword : " << keyword << std::endl;
+
 						keyywordRead = true;
 						if (keyword == endSectionKeyword) {
 							reachedSectionEnd = true;
@@ -271,7 +268,6 @@ void CliASCIIKywInterpreter::ReadASCIISection(const std::string endSectionKeywor
 								parameters += currC;
 							}
 							if (isLineEnd(currC)) {
-								//std::cout << "Parameter : " << parameters << std::endl;
 								m_infile.seekg(-1, std::ios_base::cur);
 								break;
 							}
